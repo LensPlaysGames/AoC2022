@@ -33,7 +33,7 @@
 ;; as well as the outcome of the round:
 ;;   LOSS  -> 0
 ;;   DRAW  -> 3
-;;   WIN   -> 3
+;;   WIN   -> 6
 
 ;;; Code:
 
@@ -49,8 +49,13 @@
           3
         (error "Unsupported shape")))))
 
-(defun scores-from-shapes (left right)
-  "Convert two ro sham bo shapes in a given round into a score pair."
+(defun scores-from-shapes-part-one (left right)
+  "Convert two ro sham bo shapes in a given round into a score pair.
+Expecting left to be one of A, B, or C and right to be one of X, Y, or Z.
+A -> X -> ROCK     -> 1
+B -> Y -> PAPER    -> 2
+C -> Z -> SCISSORS -> 3
+"
   (let ((left-score  (shape-to-score left))
         (right-score (shape-to-score right)))
     ;; DRAW
@@ -73,6 +78,60 @@
       (setq right-score (+ 6 right-score)))
     (cons left-score right-score)))
 
+(defun scores-from-shapes-part-two (left right)
+  "Convert two ro sham bo shapes in a given round into a score pair.
+Expecting left to be one of A, B, or C and right to be one of X, Y, or Z.
+
+A -> ROCK     -> 1
+B -> PAPER    -> 2
+C -> SCISSORS -> 3
+
+X -> LOSE
+  A -> C
+  B -> A
+  C -> B
+Y -> DRAW
+  Just play the same
+Z -> WIN
+  A -> B
+  B -> C
+  C -> A
+"
+  (let ((left-score  (shape-to-score left))
+        (right-score 0)
+        (outcome (shape-to-score right)))
+    ;; LEFT WIN
+    (when (= 1 outcome)
+      ;; LEFT PLAYS ROCK, RIGHT PLAYS SCISSORS
+      (when (= 1 left-score)
+        (setq left-score (+ 6 left-score))
+        (setq right-score 3))
+      ;; LEFT PLAYS PAPER, RIGHT PLAYS ROCK
+      (when (= 2 left-score)
+        (setq left-score (+ 6 left-score))
+        (setq right-score 1))
+      ;; LEFT PLAYS SCISSORS, RIGHT PLAYS PAPER
+      (when (= 3 left-score)
+        (setq left-score (+ 6 left-score))
+        (setq right-score 2)))
+    ;; DRAW
+    (when (= 2 outcome)
+      ;; LEFT PLAYS ANYTHING, RIGHT COPIES
+      (setq right-score (+ 3 right-score left-score))
+      (setq left-score  (+ 3 left-score)))
+    ;; RIGHT WIN
+    (when (= 3 outcome)
+      ;; LEFT PLAYS ROCK, RIGHT PLAYS PAPER
+      (when (= 1 left-score)
+        (setq right-score (+ 6 2)))
+      ;; LEFT PLAYS PAPER, RIGHT PLAYS SCISSORS
+      (when (= 2 left-score)
+        (setq right-score (+ 6 3)))
+      ;; LEFT PLAYS SCISSORS, RIGHT PLAYS PAPER
+      (when (= 3 left-score)
+        (setq right-score (+ 6 1))))
+    (cons left-score right-score)))
+
 (defun shapes-from-current-line ()
   (interactive "i")
   (let ((shapes '("X" . "Y")))
@@ -81,7 +140,7 @@
     (setcdr shapes (thing-at-point 'word t))
     shapes))
 
-(defun calculate-strategy-guide-scores ()
+(defun calculate-strategy-guide-scores-part-one ()
   (interactive "i")
   (with-temp-buffer
     (insert-file-contents "input.txt")
@@ -93,13 +152,34 @@
         (setq shapes (shapes-from-current-line))
         (next-line)
         (beginning-of-line)
-        (setq scores (scores-from-shapes (car shapes) (cdr shapes)))
+        (setq scores (scores-from-shapes-part-one (car shapes) (cdr shapes)))
         ;;(message "scores -> shapes :: %S -> %S" scores shapes)
         (setq count (+ 1 count))
         (setcar totals (+ (car scores) (car totals)))
         (setcdr totals (+ (cdr scores) (cdr totals))))
       totals)))
 
-(message "solution: %S" (calculate-strategy-guide-scores))
+(defun calculate-strategy-guide-scores-part-two ()
+  (interactive "i")
+  (with-temp-buffer
+    (insert-file-contents "input.txt")
+    (let ((count 0)
+          (shapes)
+          (scores)
+          (totals '(0 . 0)))
+      (while (not (eobp))
+        (setq shapes (shapes-from-current-line))
+        (next-line)
+        (beginning-of-line)
+        (setq scores (scores-from-shapes-part-two (car shapes) (cdr shapes)))
+        ;;(message "scores -> shapes :: %S -> %S" scores shapes)
+        (setq count (+ 1 count))
+        (setcar totals (+ (car scores) (car totals)))
+        (setcdr totals (+ (cdr scores) (cdr totals))))
+      totals)))
+
+(message "solution part one: %S" (calculate-strategy-guide-scores-part-one))
+(message "solution part two: %S" (calculate-strategy-guide-scores-part-two))
+
 
 ;;; solution.el ends here
