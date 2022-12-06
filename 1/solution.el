@@ -32,7 +32,10 @@
 
 (message "%s" "Lens_r Advent of Code 2022 day 1 puzzle 1 in Emacs Lisp")
 
-(defvar solution 0)
+(defvar solution-part-one 0)
+(defvar solution-part-two 0)
+
+(defvar solution-part-two-list '(0 0 0))
 
 (defun add-consecutive-number-list ()
   "Add a list of newline separated numbers."
@@ -45,8 +48,8 @@
     (message "possible solution: %i" possible-solution)
     possible-solution))
 
-(defun solve ()
-  "Read input.txt, keeping track of the largest list as we go."
+(defun solve-part-one ()
+  "Read input.txt, keeping track of the list with the largest sum as we go."
   (with-temp-buffer
     (insert-file-contents "input.txt")
     (let ((possible-solution))
@@ -56,12 +59,42 @@
           (next-line))
         (when (> possible-solution solution)
           (message "%s: %i" "got new solution" possible-solution)
-          (setq solution possible-solution)))
+          (setq solution-part-one possible-solution))))))
+
+
+
+(sort '(2 24 2) #'>)
+
+(defun solve-part-two ()
+  "Read input.txt, keeping track of the three lists with the largest sums as we go."
+  (with-temp-buffer
+    (insert-file-contents "input.txt")
+    (let ((possible-solutions '(0 0 0))
+          (tmp-solution))
+      (while (not (eobp))
+        (while (string= "\n" (thing-at-point 'line t))
+          (next-line))
+        (setq tmp-solution (add-consecutive-number-list))
+        ;; First element of possible solutions MUST be the smallest
+        ;; element.
+        (when (> tmp-solution (car possible-solutions))
+          (message "got new possible solution: %i" tmp-solution)
+          (setcar possible-solutions tmp-solution)
+          (sort possible-solutions #'<) ; Keep smallest element first.
+          (message "new solution: %S" possible-solutions)
+          ))
+      (setq solution-part-two-list possible-solutions)
+      (setq solution-part-two (+ (elt possible-solutions 0)
+                                 (elt possible-solutions 1)
+                                 (elt possible-solutions 2)))
       )
     )
   )
 
-(solve)
-(message "%i" solution)
+(solve-part-one)
+(message "solution part one: %i\n" solution-part-one)
+
+(solve-part-two)
+(message "solution part two: %S %S\n" solution-part-two solution-part-two-list)
 
 ;;; solution.el ends here
