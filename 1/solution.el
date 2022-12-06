@@ -1,4 +1,4 @@
-;;; solution.el --- Advent of Code day 1 puzzle 1 -*- lexical-binding: t -*-
+;;; solution.el --- Advent of Code day 1 -*- lexical-binding: t -*-
 
 ;; Author: Lens
 ;; Maintainer: Lens
@@ -30,7 +30,7 @@
 
 ;;; Code:
 
-(message "%s" "Lens_r Advent of Code 2022 day 1 puzzle 1 in Emacs Lisp")
+(message "%s" "Lens_r Advent of Code 2022 day 1 in Emacs Lisp")
 
 (defvar solution-part-one 0)
 (defvar solution-part-two 0)
