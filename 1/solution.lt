@@ -30,10 +30,27 @@
           (max-in-list (cdr l) max))
       max))
 
+(defun remove-in-list (l elem out)
+  "Return a list L with any elements matching ELEM removed. Comparison done with 'eq'."
+  (if l
+      (if (eq (car l) elem)
+          (remove-in-list (cdr l) elem out)
+          (remove-in-list (cdr l) elem (cons (car l) out)))
+      out))
+
 (print
   (with-current-buffer (open-buffer "input.txt")
     ;; Go to beginning of buffer
     (backward-bytes 999999999999)
-    (max-in-list (sum-grouped-lines 0 nil) 0)
+    (let ((calorie-totals (sum-grouped-lines 0 nil))
+          (top-three nil))
+      (define top-three (cons (max-in-list calorie-totals 0) top-three))
+      (define calorie-totals (remove-in-list calorie-totals (car top-three) nil))
+      (define top-three (cons (max-in-list calorie-totals 0) top-three))
+      (define calorie-totals (remove-in-list calorie-totals (car top-three) nil))
+      (define top-three (cons (max-in-list calorie-totals 0) top-three))
+      (define calorie-totals (remove-in-list calorie-totals (car top-three) nil))
+      (reverse-list top-three)
+      )
     )
   )
