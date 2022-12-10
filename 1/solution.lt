@@ -1,0 +1,39 @@
+;; LITE is a constantly evolving thing, so this code may be out of date.
+;; I used this version when writing it, and it works.
+;; https://codeberg.org/LensPlaysGames/LITE/src/commit/75d04db19e00a1f6ab2c13ec163346b7247f49e5
+;; https://github.com/LensPlaysGames/LITE/tree/75d04db19e00a1f6ab2c13ec163346b7247f49e5
+
+(defun sum-grouped-lines (sum out)
+  "AoC2022 Day 1 Part 1"
+  (let ((l (current-line)))
+    (forward-line)
+    ;; If on an empty line,
+    (if (or (eq l "\\n") (eq l "\\r") (eq l "\\r\\n"))
+      ;; reset sum and add it to return list.
+      (sum-grouped-lines 0 (cons sum out))
+      ;; otherwise, if on last line of buffer (not over newline and no newlines left)
+      (if (and (! (eq (byte-at-point current-buffer) "\\n")) (= 0 (seek-byte "\\n" 1)))
+        ;; return out with the final sum added.
+        (cons (+ (evaluate-string l) sum) out)
+        ;; otherwise, add to sum and keep going.
+        (sum-grouped-lines (+ (evaluate-string l) sum) out)
+        )
+      )
+    )
+  )
+
+(defun max-in-list (l max)
+  "Return the largest integer in list L."
+  (if l
+      (if (> (car l) max)
+          (max-in-list (cdr l) (car l))
+          (max-in-list (cdr l) max))
+      max))
+
+(print
+  (with-current-buffer (open-buffer "input.txt")
+    ;; Go to beginning of buffer
+    (backward-bytes 999999999999)
+    (max-in-list (sum-grouped-lines 0 nil) 0)
+    )
+  )
