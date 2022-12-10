@@ -1,4 +1,5 @@
 ;; LITE is a constantly evolving thing, so this code may be out of date.
+;; Run like `lite --script -- solution.lt`
 ;; I used this version when writing it, and it works.
 ;; https://codeberg.org/LensPlaysGames/LITE/src/commit/75d04db19e00a1f6ab2c13ec163346b7247f49e5
 ;; https://github.com/LensPlaysGames/LITE/tree/75d04db19e00a1f6ab2c13ec163346b7247f49e5
