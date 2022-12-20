@@ -62,13 +62,12 @@ AND the upper bound of lhs is greater than the upper bound of rhs."
       (>= (cdr lhs) (cdr rhs)))))
 
 (defun bounds-r-contains-l-p (bounds)
-  "Return T iff the lower bound of rhs of BOUNDS is less than the lower bound of lhs,
-AND the upper bound of rhs is greater than the upper bound of lhs."
+  "Return T iff the lower bound of rhs of BOUNDS is less than or equal to the lower bound of lhs,
+AND the upper bound of rhs is greater than or equal to the upper bound of lhs."
   (let ((lhs (car bounds))
         (rhs (cdr bounds)))
     (when (<= (car rhs) (car lhs))
       (>= (cdr rhs) (cdr lhs)))))
-
 
 (defun bounds-contains-p (bounds)
   "Return T iff one pair of BOUNDS is entirely contained by the other.
