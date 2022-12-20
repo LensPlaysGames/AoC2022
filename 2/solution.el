@@ -1,4 +1,4 @@
-;;; solution.el --- Advent of Code day 1 puzzle 1 -*- lexical-binding: t -*-
+;;; solution.el --- Advent of Code day 2 -*- lexical-binding: t -*-
 
 ;; Author: Lens
 ;; Maintainer: Lens
