@@ -76,18 +76,15 @@ Otherwise NIL."
   (or (bounds-l-contains-r-p bounds)
       (bounds-r-contains-l-p bounds)))
 
-(print (bounds-contains-p '((0 . 4) 2 . 3)))
-(print (bounds-contains-p '((2 . 3) 0 . 4)))
-
-(print (bounds-contains-p '((3 . 7) 2 . 4)))
-(print (bounds-contains-p '((2 . 4) 3 . 7)))
-
 (with-temp-buffer
   (insert-file-contents "input.txt")
   (let ((total 0))
     (while (not (eobp))
-      (when (bounds-contains-p (decode-bounds))
-        (setq total (1+ total)))
-      (next-line)
-      )
+      (let ((bounds (decode-bounds)))
+        (when (bounds-contains-p bounds)
+          (progn
+            (setq total (1+ total))
+            (print bounds)
+            )))
+      (next-line))
     (print total)))
