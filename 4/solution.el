@@ -39,7 +39,7 @@
     ;; Skip to next number
     (re-search-forward "-")
     ;; Get second number (first upper bound)
-    (setcdr (car out) (thing-at-point 'number t))
+    (setcdr (car out) (abs (thing-at-point 'number t)))
 
     ;; Skip to next number (second lower bound)
     (re-search-forward ",")
@@ -49,7 +49,7 @@
     ;; Skip to second upper bound
     (re-search-forward "-")
     ;; Get second upper bound
-    (setcdr (cdr out) (thing-at-point 'number t))
+    (setcdr (cdr out) (abs (thing-at-point 'number t)))
 
     out))
 
