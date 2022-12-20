@@ -37,6 +37,7 @@
 (require 'subr-x)
 
 (defvar total-priority 0)
+(defvar total-badge-sum 0)
 
 (defun priority-value-from-char (c)
   (if (char-uppercase-p c)
@@ -47,15 +48,20 @@
 
 (defun sum-alike-priorities ()
   (interactive "i")
+  (setq total-priority 0)
   (with-temp-buffer
     (insert-file-contents "input.txt")
+    ;; Loop over each line of input.txt
     (while (not (eobp))
+      ;; Collect rucksack as word at point from beginning of line.
       (beginning-of-line)
       (let ((rucksack (thing-at-point 'word t))
             (rucksack-length)
             (rucksack-compartment-length))
+        ;; Get rucksack total length and rucksack compartment length.
         (setq rucksack-length (length rucksack))
         (setq rucksack-compartment-length (/ rucksack-length 2))
+        ;; Extract left and right compartments as substrings from full rucksack.
         (let ((rucksack-left  (substring rucksack 0 rucksack-compartment-length))
               (rucksack-right (substring rucksack rucksack-compartment-length))
               (priority 0)
@@ -76,8 +82,55 @@
       (next-line))
     ))
 
+(defun sum-alike-group-badge-priorities ()
+  (interactive "i")
+  (setq total-badge-sum 0)
+  (with-temp-buffer
+    (insert-file-contents "input.txt")
+    ;; Loop over each line of input.txt
+    (while (not (eobp))
+      ;; Collect group of three rucksacks.
+      (beginning-of-line)
+      (let ((rucksack-1 "")
+            (rucksack-1-length 0)
+            (rucksack-2 "")
+            (rucksack-3 "")
+            (priority 0)
+            (case-fold-search nil))
+        (setq rucksack-1 (thing-at-point 'word t))
+        (setq rucksack-1-length (length rucksack-1))
+        (next-line)
+        (beginning-of-line)
+        (setq rucksack-2 (thing-at-point 'word t))
+        (next-line)
+        (beginning-of-line)
+        (setq rucksack-3 (thing-at-point 'word t))
+
+        ;; Find character that is present in all three...
+
+        ;; For every character in ONE, check if it is in TWO and THREE.
+        ;; If present in all three, set priority (which exits loop).
+        (while (and (= 0 priority) (not (= 0 rucksack-1-length)))
+          (if (string-match (char-to-string (string-to-char rucksack-1)) rucksack-2)
+              (if (string-match (char-to-string (string-to-char rucksack-1)) rucksack-3)
+                  (setq priority (priority-value-from-char (string-to-char rucksack-1)))
+                (progn
+                  (setq rucksack-1 (substring rucksack-1 1))
+                  (setq rucksack-1-length (1- rucksack-1-length))))
+            (progn
+              (setq rucksack-1 (substring rucksack-1 1))
+              (setq rucksack-1-length (1- rucksack-1-length)))))
+        ;; Add priority to current sum.
+        (setq total-badge-sum (+ total-badge-sum priority)))
+      ;; Handle next group of three rucksacks.
+      (next-line))
+    ))
+
 (sum-alike-priorities)
-(message "solution: %S" total-priority)
+(message "solution pt. 1: %S" total-priority)
+
+(sum-alike-group-badge-priorities)
+(message "solution pt. 2: %S" total-badge-sum)
 
 (setq total-priority 0)
 
