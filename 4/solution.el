@@ -101,10 +101,14 @@ Otherwise NIL."
 
 (with-temp-buffer
   (insert-file-contents "input.txt")
-  (let ((total 0))
+  (let ((total-contained  0)
+        (total-overlapped 0))
     (while (not (eobp))
       (let ((bounds (decode-bounds)))
         (when (bounds-contains-p bounds)
-          (setq total (1+ total))))
+          (setq total-contained (1+ total-contained)))
+        (when (bounds-overlaps-p bounds)
+          (setq total-overlapped (1+ total-overlapped))))
       (next-line))
-    (print total)))
+    (print total-contained)
+    (print total-overlapped)))
