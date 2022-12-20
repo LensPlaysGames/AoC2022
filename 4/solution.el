@@ -82,9 +82,6 @@ Otherwise NIL."
     (while (not (eobp))
       (let ((bounds (decode-bounds)))
         (when (bounds-contains-p bounds)
-          (progn
-            (setq total (1+ total))
-            (print bounds)
-            )))
+          (setq total (1+ total))))
       (next-line))
     (print total)))
