@@ -35,21 +35,21 @@
   (beginning-of-line)
   (let ((out (cons (cons 0 0) (cons 0 0))))
     ;; Get first number (first lower bound)
-    (setcar (car out) (thing-at-point 'word t))
+    (setcar (car out) (thing-at-point 'number t))
     ;; Skip to next number
     (re-search-forward "-")
     ;; Get second number (first upper bound)
-    (setcdr (car out) (thing-at-point 'word t))
+    (setcdr (car out) (thing-at-point 'number t))
 
     ;; Skip to next number (second lower bound)
     (re-search-forward ",")
 
     ;; Get second lower bound
-    (setcar (cdr out) (thing-at-point 'word t))
+    (setcar (cdr out) (thing-at-point 'number t))
     ;; Skip to second upper bound
     (re-search-forward "-")
     ;; Get second upper bound
-    (setcdr (cdr out) (thing-at-point 'word t))
+    (setcdr (cdr out) (thing-at-point 'number t))
 
     out))
 
@@ -78,5 +78,10 @@ Otherwise NIL."
 
 (with-temp-buffer
   (insert-file-contents "input.txt")
-  (print (decode-bounds))
-  )
+  (let ((total 0))
+    (while (not (eobp))
+      (when (bounds-contains-p (decode-bounds))
+        (setq total (1+ total)))
+      (next-line)
+      )
+    (print total)))
