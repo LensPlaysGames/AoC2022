@@ -75,6 +75,30 @@ Otherwise NIL."
   (or (bounds-l-contains-r-p bounds)
       (bounds-r-contains-l-p bounds)))
 
+
+(defun bounds-l-overlaps-r-p (bounds)
+  "Return T iff the lower bound of lhs of BOUNDS is less than the upper bound of rhs,
+AND the lower bound of lhs is greater than the lower bound of rhs."
+  (let ((lhs (car bounds))
+        (rhs (cdr bounds)))
+    (when (<= (car lhs) (cdr rhs))
+      (>= (car lhs) (car rhs)))))
+
+(defun bounds-r-overlaps-l-p (bounds)
+  "Return T iff the lower bound of rhs of BOUNDS is less than the upper bound of lhs,
+AND the lower bound of rhs is greater than the lower bound of lhs."
+  (let ((lhs (car bounds))
+        (rhs (cdr bounds)))
+    (when (<= (car rhs) (cdr lhs))
+      (>= (car rhs) (car lhs)))))
+
+(defun bounds-overlaps-p (bounds)
+  "Return T iff one pair of BOUNDS is overlapped at all by the other.
+Otherwise NIL."
+  (or (bounds-l-overlaps-r-p bounds)
+      (bounds-r-overlaps-l-p bounds)))
+
+
 (with-temp-buffer
   (insert-file-contents "input.txt")
   (let ((total 0))
